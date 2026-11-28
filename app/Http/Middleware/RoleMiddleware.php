@@ -9,12 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 class RoleMiddleware
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
+     * Pemakaian di rute: ->middleware('role:admin') atau ->middleware('role:mitra,admin')
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
+        $user = $request->user();
+
+        if (! $user || ! $user->hasRole(...$roles)) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         return $next($request);
     }
 }

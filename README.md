@@ -1,59 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FoodSave (Tugas Akhir Arsitektur Sistem Perusahaan, P13)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+FoodSave adalah platform web penjualan makanan layak konsumsi berlebih dari UMKM kuliner di sekitar
+Universitas Jambi (Mendalo). Mitra mengunggah produk surplus berdiskon, konsumen mencari dan memesan,
+lalu mengambil makanan dan membayar langsung ke mitra.
 
-## About Laravel
+Repository ini adalah fondasi aplikasi untuk P13 (Architecture Freeze & Desain Sistem). Desainnya mengikuti
+laporan P13 Kelompok 4 IP 4 (ERD, use case, dan matriks ketelusuran). Repository ini terpisah dari
+repository produksi FoodSave PMW (foodsave.id).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Status
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Fondasi: pola MVC, struktur folder, repo dengan branch, serta login dan role (Konsumen, Mitra, Admin).
+Fitur lain (katalog, produk, pemesanan, verifikasi mitra) dikerjakan pada branch `feature/*` berikutnya.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Teknologi
 
-## Learning Laravel
+| Aspek | Pilihan |
+|---|---|
+| Framework | Laravel 12 (PHP 8.2+) |
+| Pola | MVC (Model, View/Blade, Controller) |
+| Frontend | Blade + Vite |
+| Autentikasi | Laravel Breeze (Blade) |
+| Role | Tabel `roles` + kolom `role_id` pada `users`, dibatasi `RoleMiddleware` |
+| Basis data | MySQL |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Prasyarat
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2 atau lebih baru (XAMPP)
+- Composer
+- Node.js dan npm
+- MySQL (XAMPP)
+- Git
 
-## Laravel Sponsors
+## Instalasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/Intansz/foodsave-asp.git
+cd foodsave-asp
+git checkout feature/auth-role
+composer install
+npm install
+```
 
-### Premium Partners
+> Catatan: selama pull request `feature/auth-role` belum digabung, pakai branch `feature/auth-role`
+> seperti di atas. Setelah digabung, ganti dengan `git checkout dev`.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Buat berkas environment (di PowerShell):
 
-## Contributing
+```powershell
+Copy-Item .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Nyalakan **Apache** dan **MySQL** di XAMPP, lalu buat database kosong bernama `foodsave_asp`
+(lewat phpMyAdmin, collation `utf8mb4_unicode_ci`). Pastikan `.env` berisi:
 
-## Code of Conduct
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=foodsave_asp
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Jalankan migrasi dan data awal (role + akun uji), lalu bangun aset:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate:fresh --seed
+npm run build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Menjalankan
 
-## License
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Buka http://127.0.0.1:8000. Untuk pengembangan tampilan, jalankan `npm run dev` di terminal lain.
+
+## Akun uji
+
+Akun ini hanya untuk pengembangan lokal. Jangan memakai kata sandi asli.
+
+| Role | Email | Kata sandi | Halaman setelah login |
+|---|---|---|---|
+| Konsumen | konsumen@foodsave.test | FoodSaveUji2026 | /konsumen |
+| Mitra | mitra@foodsave.test | FoodSaveUji2026 | /mitra |
+| Admin | admin@foodsave.test | FoodSaveUji2026 | /admin |
+
+Membuka halaman role lain (misalnya konsumen membuka `/admin`) menghasilkan galat 403.
+
+## Struktur folder (ringkas)
+
+| Folder | Fungsi |
+|---|---|
+| `app/Models` | Model Eloquent (User, Role, dst.) |
+| `app/Http/Controllers` | Controller (termasuk autentikasi Breeze) |
+| `app/Http/Middleware` | `RoleMiddleware`, pembatas akses per role |
+| `app/Services` | Logika bisnis (mis. pengamanan stok pada pemesanan) |
+| `resources/views` | Tampilan Blade, dikelompokkan per role |
+| `routes` | `web.php` dan `auth.php` |
+| `database/migrations` | Skema tabel |
+| `database/seeders` | Role dan akun uji |
+
+## Alur kerja Git
+
+- `main`: versi stabil, tidak boleh commit langsung.
+- `dev`: integrasi semua fitur.
+- `feature/[nama-fitur]`: satu fitur satu branch, dibuat dari `dev`, digabung ke `dev` lewat pull request.
+- Pesan commit memakai awalan `feat:`, `fix:`, `docs:`, atau `chore:`.
+
+## Kendala yang sering muncul
+
+| Pesan | Penyebab dan solusi |
+|---|---|
+| `SQLSTATE[HY000] [2002]` | MySQL belum menyala. Start MySQL di XAMPP. |
+| `Unknown database 'foodsave_asp'` | Database belum dibuat di phpMyAdmin. |
+| `Vite manifest not found` | Jalankan `npm run build` (atau `npm run dev`). |
+| Perubahan `.env` tidak terbaca | Jalankan `php artisan config:clear`. |
+
+## Keamanan
+
+Berkas `.env` tidak boleh di-commit (sudah diabaikan oleh `.gitignore`). Simpan pengaturan contoh
+hanya di `.env.example`, tanpa kata sandi asli.
